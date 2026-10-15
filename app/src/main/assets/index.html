@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'">
+  <title>Galleta Factory</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="game.js" defer></script>
+  <script src="ui.js" defer></script>
+</head>
+<body>
+  <main>
+    <header><span class="eyebrow">TU PEQUEÑO IMPERIO DULCE</span><h1>Galleta <em>Factory</em></h1><p>Una galleta. Un toque. Un imperio.</p></header>
+    <section class="bakery" aria-label="Tu fábrica">
+      <span class="eyebrow">EN LA DESPENSA</span>
+      <div id="cookies" class="count">0</div><span class="unit">galletas</span>
+      <div class="stats"><span><b id="tap-rate">1</b> / toque</span><span><b id="rate">0</b> / segundo</span></div>
+      <button id="cookie" aria-label="Hornear galletas"><span class="cookie-art" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></button>
+      <p class="hint">Toca la galleta para hornear</p>
+      <div class="goal"><div><span id="goal-label">Tu primer lote · 100 galletas</span><span id="goal-percent">0%</span></div><progress id="goal" max="100" value="0" aria-label="Progreso de la meta"></progress></div>
+    </section>
+    <section aria-labelledby="shop-heading"><div class="section-title"><h2 id="shop-heading">Mejora tu obrador</h2><span>CRECE SIN PARAR</span></div><div id="shop"></div></section>
+    <p id="message" class="message" role="status" aria-live="polite">Tu aventura empieza con un toque.</p>
+    <footer><span id="save-status">Guardado automático · Sin conexión</span><button id="reset" class="reset">Reiniciar partida</button></footer>
+  </main>
+</body>
+</html>

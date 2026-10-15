@@ -1,0 +1,68 @@
+name: Generar APK Android
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  apk:
+    name: Probar y compilar demo
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Preparar Node para las pruebas
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Probar lógica del juego
+        run: node --test tests/game.test.cjs
+
+      - name: Preparar Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Preparar Gradle 8.11.1
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+
+      - name: Instalar SDK Android 35
+        run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-35" "build-tools;35.0.0"'
+
+      - name: Comprobar y compilar APK de prueba
+        run: gradle --no-daemon :app:lintDebug :app:assembleDebug
+
+      - name: Preparar descarga
+        run: |
+          mkdir -p dist
+          cp app/build/outputs/apk/debug/app-debug.apk dist/galleta-factory-demo.apk
+          cd dist
+          sha256sum galleta-factory-demo.apk > SHA256SUMS.txt
+
+      - name: Publicar APK descargable
+        id: artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: galleta-factory-apk-${{ github.run_number }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Mostrar enlace de descarga
+        env:
+          ARTIFACT_URL: ${{ steps.artifact.outputs.artifact-url }}
+        run: |
+          echo '## 🍪 Galleta Factory: APK listo' >> "$GITHUB_STEP_SUMMARY"
+          printf '\n[Descargar APK (ZIP)](%s)\n' "$ARTIFACT_URL" >> "$GITHUB_STEP_SUMMARY"
+          echo 'Extrae el ZIP e instala galleta-factory-demo.apk en Android 6 o superior.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'APK de prueba firmado automáticamente. No es una versión para Google Play.' >> "$GITHUB_STEP_SUMMARY"
